@@ -19,7 +19,6 @@ import java.awt.event.MouseEvent;
 public class JDBCGUI {
 
 	public JFrame frame;
-	private JTextField socialSecurityNumberField;
 	private JTextField dateOfBirthField;
 	private JTextField firstNameField;
 	private JTextField surnameField;
@@ -28,43 +27,119 @@ public class JDBCGUI {
 	private static JDBC jdbc = new JDBC();
 	private int userno = 0;
 	private JTextField searchField;
+	private JLabel userCount = new JLabel("User 1 out of " + jdbc.count);
+	private int currentCount = 0;
+	private JTextField socialSecurityNumberField;
 
 	public JDBCGUI() {
 		
 		initialize();
-		socialSecurityNumberField.setText(String.valueOf(jdbc.employees[userno].getSocialSecurityNumber()));
-		dateOfBirthField.setText(jdbc.employees[userno].getDateOfBirth());
-		firstNameField.setText(jdbc.employees[userno].getFirstName());
-		surnameField.setText(jdbc.employees[userno].getSurname());
-		salaryField.setText(String.valueOf(jdbc.employees[userno].getSalary()));
-		genderField.setText(String.valueOf(jdbc.employees[userno].getGender()));
+		socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(userno).getSocialSecurityNumber()));
+		dateOfBirthField.setText(jdbc.employees.get(userno).getDateOfBirth());
+		firstNameField.setText(jdbc.employees.get(userno).getFirstName());
+		surnameField.setText(jdbc.employees.get(userno).getSurname());
+		salaryField.setText(String.valueOf(jdbc.employees.get(userno).getSalary()));
+		genderField.setText(String.valueOf(jdbc.employees.get(userno).getGender()));
+		
+		
+		JButton btnUpdate_1 = new JButton("Update");
+		btnUpdate_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				jdbc.employees.get(userno).setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
+				jdbc.employees.get(userno).setDateOfBirth(dateOfBirthField.getText());
+				jdbc.employees.get(userno).setFirstName(firstNameField.getText());
+				jdbc.employees.get(userno).setSurname(surnameField.getText());
+				jdbc.employees.get(userno).setSalary(Integer.parseInt(salaryField.getText()));
+				jdbc.employees.get(userno).setGender(genderField.getText().charAt(0));
+				jdbc.update(jdbc.employees.get(userno));
+				
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(0).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(0).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(0).getFirstName());
+				surnameField.setText(jdbc.employees.get(0).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
+				userCount.setText("User "+ 1 +" out of " + jdbc.count);
+				
+			}
+		});
+		GridBagConstraints gbc_btnUpdate_1 = new GridBagConstraints();
+		gbc_btnUpdate_1.insets = new Insets(0, 0, 5, 5);
+		gbc_btnUpdate_1.gridx = 5;
+		gbc_btnUpdate_1.gridy = 11;
+		frame.getContentPane().add(btnUpdate_1, gbc_btnUpdate_1);
 		
 		searchField = new JTextField();
 		GridBagConstraints gbc_searchField = new GridBagConstraints();
 		gbc_searchField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_searchField.insets = new Insets(0, 0, 0, 5);
+		gbc_searchField.insets = new Insets(0, 0, 5, 5);
 		gbc_searchField.gridx = 3;
 		gbc_searchField.gridy = 13;
 		frame.getContentPane().add(searchField, gbc_searchField);
 		searchField.setColumns(10);
 		
+		JButton btnSearch = new JButton("Search");
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(searchField.getText());
+				if (searchField.getText()!= "") {
+				jdbc.search(searchField.getText());		
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(0).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(0).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(0).getFirstName());
+				surnameField.setText(jdbc.employees.get(0).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
+				userCount.setText("User "+ 1 +" out of " + jdbc.count);
+				} 
+			}
+		});
+		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
+		gbc_btnSearch.anchor = GridBagConstraints.WEST;
+		gbc_btnSearch.gridwidth = 2;
+		gbc_btnSearch.insets = new Insets(0, 0, 5, 5);
+		gbc_btnSearch.gridx = 4;
+		gbc_btnSearch.gridy = 13;
+		frame.getContentPane().add(btnSearch, gbc_btnSearch);
+		
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				jdbc.run();
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(0).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(0).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(0).getFirstName());
+				surnameField.setText(jdbc.employees.get(0).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
+				userCount.setText("User "+ 1 +" out of " + jdbc.count);
+				searchField.setText("");
+			}
+		});
+		GridBagConstraints gbc_btnRefresh = new GridBagConstraints();
+		gbc_btnRefresh.insets = new Insets(0, 0, 0, 5);
+		gbc_btnRefresh.gridx = 3;
+		gbc_btnRefresh.gridy = 14;
+		frame.getContentPane().add(btnRefresh, gbc_btnRefresh);
+		
 	}
+	
 	
 	private void initialize() {
 
 		frame = new JFrame();
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{97, 18, 0, 139, 0, 0, 0, 0, 0};
-		gridBagLayout.rowHeights = new int[]{14, 35, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWidths = new int[]{97, 18, 0, 139, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.rowHeights = new int[]{14, 35, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		frame.getContentPane().setLayout(gridBagLayout);
 		
 		JLabel lblEmployeeDetails_1 = new JLabel("Employee Details");
 		GridBagConstraints gbc_lblEmployeeDetails_1 = new GridBagConstraints();
-		gbc_lblEmployeeDetails_1.gridwidth = 3;
 		gbc_lblEmployeeDetails_1.insets = new Insets(0, 0, 5, 5);
-		gbc_lblEmployeeDetails_1.gridx = 2;
+		gbc_lblEmployeeDetails_1.gridx = 3;
 		gbc_lblEmployeeDetails_1.gridy = 1;
 		frame.getContentPane().add(lblEmployeeDetails_1, gbc_lblEmployeeDetails_1);
 		
@@ -77,12 +152,12 @@ public class JDBCGUI {
 		frame.getContentPane().add(lblSsn, gbc_lblSsn);
 		
 		socialSecurityNumberField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.fill = GridBagConstraints.BOTH;
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.gridx = 3;
-		gbc_textField.gridy = 2;
-		frame.getContentPane().add(socialSecurityNumberField, gbc_textField);
+		GridBagConstraints gbc_socialSecurityNumberField = new GridBagConstraints();
+		gbc_socialSecurityNumberField.insets = new Insets(0, 0, 5, 5);
+		gbc_socialSecurityNumberField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_socialSecurityNumberField.gridx = 3;
+		gbc_socialSecurityNumberField.gridy = 2;
+		frame.getContentPane().add(socialSecurityNumberField, gbc_socialSecurityNumberField);
 		socialSecurityNumberField.setColumns(10);
 		
 		JButton btnPrevious = new JButton("Previous");
@@ -93,17 +168,19 @@ public class JDBCGUI {
 				} else {
 					userno = jdbc.count-1;
 				}
-				socialSecurityNumberField.setText(String.valueOf(jdbc.employees[userno].getSocialSecurityNumber()));
-				dateOfBirthField.setText(jdbc.employees[userno].getDateOfBirth());
-				firstNameField.setText(jdbc.employees[userno].getFirstName());
-				surnameField.setText(jdbc.employees[userno].getSurname());
-				salaryField.setText(String.valueOf(jdbc.employees[userno].getSalary()));
-				genderField.setText(String.valueOf(jdbc.employees[userno].getGender()));
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(userno).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(userno).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(userno).getFirstName());
+				surnameField.setText(jdbc.employees.get(userno).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(userno).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(userno).getGender()));
+				currentCount = userno + 1;
+				userCount.setText("User "+ currentCount +" out of " + jdbc.count);
 			}
 		});
 		GridBagConstraints gbc_btnPrevious = new GridBagConstraints();
 		gbc_btnPrevious.insets = new Insets(0, 0, 5, 5);
-		gbc_btnPrevious.gridx = 6;
+		gbc_btnPrevious.gridx = 5;
 		gbc_btnPrevious.gridy = 3;
 		frame.getContentPane().add(btnPrevious, gbc_btnPrevious);
 		
@@ -132,20 +209,19 @@ public class JDBCGUI {
 				} else if (jdbc.count > 1){
 					userno = 0;
 				}
-				else {
-					userno = userno;
-				}
-				socialSecurityNumberField.setText(String.valueOf(jdbc.employees[userno].getSocialSecurityNumber()));
-				dateOfBirthField.setText(jdbc.employees[userno].getDateOfBirth());
-				firstNameField.setText(jdbc.employees[userno].getFirstName());
-				surnameField.setText(jdbc.employees[userno].getSurname());
-				salaryField.setText(String.valueOf(jdbc.employees[userno].getSalary()));
-				genderField.setText(String.valueOf(jdbc.employees[userno].getGender()));
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(userno).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(userno).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(userno).getFirstName());
+				surnameField.setText(jdbc.employees.get(userno).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(userno).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(userno).getGender()));
+				currentCount = userno + 1;
+				userCount.setText("User "+ currentCount +" out of " + jdbc.count);
 			}
 		});
 		GridBagConstraints gbc_btnNext = new GridBagConstraints();
 		gbc_btnNext.insets = new Insets(0, 0, 5, 5);
-		gbc_btnNext.gridx = 6;
+		gbc_btnNext.gridx = 5;
 		gbc_btnNext.gridy = 5;
 		frame.getContentPane().add(btnNext, gbc_btnNext);
 		
@@ -217,6 +293,30 @@ public class JDBCGUI {
 		frame.getContentPane().add(genderField, gbc_textField_5);
 		genderField.setColumns(10);
 		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				userno = (jdbc.count);
+				Employee employee = new Employee();
+				employee.setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
+				employee.setDateOfBirth(dateOfBirthField.getText());
+				employee.setFirstName(firstNameField.getText());
+				employee.setSurname(surnameField.getText());
+				employee.setSalary(Integer.parseInt(salaryField.getText()));
+				employee.setGender(genderField.getText().charAt(0));
+				jdbc.employees.add(employee);
+				jdbc.create(jdbc.employees.get(jdbc.employees.size()-1));
+				
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(0).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(0).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(0).getFirstName());
+				surnameField.setText(jdbc.employees.get(0).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
+				userCount.setText("User "+ 1 +" out of " + jdbc.count);
+			}
+		});
+		
 		JButton btnClear = new JButton("Clear");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -227,29 +327,22 @@ public class JDBCGUI {
 				surnameField.setText("");
 				salaryField.setText("");
 				genderField.setText("");
+				searchField.setText("");
+				
 			}
 		});
 		GridBagConstraints gbc_btnClear = new GridBagConstraints();
 		gbc_btnClear.insets = new Insets(0, 0, 5, 5);
-		gbc_btnClear.gridx = 6;
+		gbc_btnClear.gridx = 5;
 		gbc_btnClear.gridy = 9;
 		frame.getContentPane().add(btnClear, gbc_btnClear);
 		
-		JButton btnAdd = new JButton("Add");
-		btnAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				userno = (jdbc.count);
-				jdbc.employees[userno] = new Employee();
-				jdbc.employees[userno].setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
-				jdbc.employees[userno].setDateOfBirth(dateOfBirthField.getText());
-				jdbc.employees[userno].setFirstName(firstNameField.getText());
-				jdbc.employees[userno].setSurname(surnameField.getText());
-				jdbc.employees[userno].setSalary(Integer.parseInt(salaryField.getText()));
-				jdbc.employees[userno].setGender(genderField.getText().charAt(0));
-				
-				jdbc.create(jdbc.employees[userno]);
-			}
-		});
+		
+		GridBagConstraints gbc_userCount = new GridBagConstraints();
+		gbc_userCount.insets = new Insets(0, 0, 5, 5);
+		gbc_userCount.gridx = 3;
+		gbc_userCount.gridy = 10;
+		frame.getContentPane().add(userCount, gbc_userCount);
 		GridBagConstraints gbc_btnAdd = new GridBagConstraints();
 		gbc_btnAdd.anchor = GridBagConstraints.WEST;
 		gbc_btnAdd.insets = new Insets(0, 0, 5, 5);
@@ -266,42 +359,18 @@ public class JDBCGUI {
 
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				jdbc.delete(jdbc.employees[userno]);
-			}
-		});
-		
-		
-		JButton btnUpdate_1 = new JButton("Update");
-		btnUpdate_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jdbc.employees[userno].setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
-				jdbc.employees[userno].setDateOfBirth(dateOfBirthField.getText());
-				jdbc.employees[userno].setFirstName(firstNameField.getText());
-				jdbc.employees[userno].setSurname(surnameField.getText());
-				jdbc.employees[userno].setSalary(Integer.parseInt(salaryField.getText()));
-				jdbc.employees[userno].setGender(genderField.getText().charAt(0));
+				jdbc.delete(jdbc.employees.get(userno));
 				
-				jdbc.update(jdbc.employees[userno]);
-			}
-		});
-		GridBagConstraints gbc_btnUpdate_1 = new GridBagConstraints();
-		gbc_btnUpdate_1.insets = new Insets(0, 0, 5, 5);
-		gbc_btnUpdate_1.gridx = 6;
-		gbc_btnUpdate_1.gridy = 11;
-		frame.getContentPane().add(btnUpdate_1, gbc_btnUpdate_1);
-		
-		JButton btnSearch = new JButton("Search");
-		btnSearch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				jdbc.search(searchField.getText());
+				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(0).getSocialSecurityNumber()));
+				dateOfBirthField.setText(jdbc.employees.get(0).getDateOfBirth());
+				firstNameField.setText(jdbc.employees.get(0).getFirstName());
+				surnameField.setText(jdbc.employees.get(0).getSurname());
+				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
+				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
+				userCount.setText("User "+ 1 +" out of " + jdbc.count);
 				
 			}
 		});
-		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
-		gbc_btnSearch.insets = new Insets(0, 0, 5, 5);
-		gbc_btnSearch.gridx = 3;
-		gbc_btnSearch.gridy = 12;
-		frame.getContentPane().add(btnSearch, gbc_btnSearch);
 		
 	}
 	

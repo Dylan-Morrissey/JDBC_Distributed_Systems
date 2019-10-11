@@ -3,7 +3,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Properties;
 
 public class JDBC {
@@ -15,7 +15,7 @@ public class JDBC {
 	private final String dbName = "test";
 	private final String tableName = "employee";
 	public int count = 0;
-	public Employee[] employees;
+	public ArrayList<Employee> employees = new ArrayList<Employee>();
 	
 	public Connection getConnection() throws SQLException {
 		Connection conn = null;
@@ -46,7 +46,7 @@ public class JDBC {
 		// Connect to MySQL
 		Connection conn = null;
 		count = 0;
-		employees = new Employee[100];
+		employees = new ArrayList<Employee>();
 		try {
 			conn = this.getConnection();
 			System.out.println("Connected to database");
@@ -61,18 +61,31 @@ public class JDBC {
 			ResultSet rs = s.getResultSet ();
 
 			while (rs.next ()) {
-				 employees[count] = new Employee();
-				 employees[count].setSocialSecurityNumber(rs.getInt("social_security_number"));
-				 employees[count].setDateOfBirth(rs.getString("date_of_birth"));
-				 employees[count].setFirstName(rs.getString("first_name"));
-				 employees[count].setSurname(rs.getString("surname"));
-				 employees[count].setSalary(rs.getInt("salary"));
-				 employees[count].setGender(rs.getString("Gender").charAt(0));
-				 count ++;
+				Employee employee = new Employee();
+				employee.setSocialSecurityNumber(rs.getInt("social_security_number"));
+				employee.setDateOfBirth(rs.getString("date_of_birth"));
+				employee.setFirstName(rs.getString("first_name"));
+				employee.setSurname(rs.getString("surname"));
+				employee.setSalary(rs.getInt("salary"));
+				employee.setGender(rs.getString("gender").charAt(0));
+	
+				employees.add(employee);
+				count ++;
 				 }
 			rs.close ();
 			s.close ();
 			System.out.println (count + " rows were retrieved");
+			if (count == 0) {
+				Employee employee = new Employee();
+				employee.setSocialSecurityNumber(-1);
+				employee.setDateOfBirth("");
+				employee.setFirstName("");
+				employee.setSurname("");
+				employee.setSalary(-1);
+				employee.setGender(" ".charAt(0));
+				
+				employees.add(employee);
+			}
 		} catch (SQLException e) {
 			System.out.println("ERROR: Could not create the resultSet");
 			e.printStackTrace();
@@ -82,26 +95,39 @@ public class JDBC {
 	
 	public String search(String surname) {
 		try {
+			count = 0;
 			Connection conn = this.getConnection();
 			Statement s = conn.createStatement ();
-			s.executeQuery ("SELECT * FROM `employee` WHERE `surname`='"+ surname+"'");
+			s.executeQuery ("SELECT * FROM `employee` WHERE `surname`='"+ surname +"'");
 			ResultSet rs = s.getResultSet ();
-			employees = new Employee[100];
+			employees = new ArrayList<Employee>();
 			while (rs.next ()) {
-				 employees[count] = new Employee();
-				 employees[count].setSocialSecurityNumber(rs.getInt("social_security_number"));
-				 employees[count].setDateOfBirth(rs.getString("date_of_birth"));
-				 employees[count].setFirstName(rs.getString("first_name"));
-				 employees[count].setSurname(rs.getString("surname"));
-				 employees[count].setSalary(rs.getInt("salary"));
-				 employees[count].setGender(rs.getString("Gender").charAt(0));
-				 count ++;
+				Employee employee = new Employee();
+				employee.setSocialSecurityNumber(rs.getInt("social_security_number"));
+				employee.setDateOfBirth(rs.getString("date_of_birth"));
+				employee.setFirstName(rs.getString("first_name"));
+				employee.setSurname(rs.getString("surname"));
+				employee.setSalary(rs.getInt("salary"));
+				employee.setGender(rs.getString("gender").charAt(0));
+				
+				employees.add(employee);
+				count ++;
 				 }
 			rs.close ();
 			s.close ();
 			System.out.println (count + " rows were retrieved");
+			if (count == 0) {
+				Employee employee = new Employee();
+				employee.setSocialSecurityNumber(0);
+				employee.setDateOfBirth("");
+				employee.setFirstName("");
+				employee.setSurname("");
+				employee.setSalary(0);
+				employee.setGender(" ".charAt(0));
+				
+				employees.add(employee);
+			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -114,13 +140,13 @@ public class JDBC {
 		
 		try {
 			conn = this.getConnection();
-		    String insertTable = "INSERT INTO `employee`(`social_security_number`, `date_of_birth`, `first_name`, `surname`, `salary`, `gender`) VALUES ("
-			+employee.getSocialSecurityNumber()+",'"
+		    String insertTable = "INSERT INTO `employee`(`social_security_number`, `date_of_birth`, `first_name`, `surname`, `salary`, `gender`) "
+		    + "VALUES ("+employee.getSocialSecurityNumber()+",'"
 		    +employee.getDateOfBirth()+"','"
 			+employee.getFirstName()+"','"
 		    +employee.getSurname()+"',"
-		    +employee.getSalary()+",'"+
-		    employee.getGender()+"')";
+		    +employee.getSalary()+",'"
+		    +employee.getGender()+"')";
 		    
 			
 			this.executeUpdate(conn, insertTable);
