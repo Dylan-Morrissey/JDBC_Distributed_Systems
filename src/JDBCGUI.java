@@ -315,7 +315,21 @@ public class JDBCGUI {
 				Employee employee = new Employee();
 				
 				try {
+					int social = Integer.parseInt(socialSecurityNumberField.getText());
+					boolean alreadyUser = false;
+					if (alreadyUser == false) {
+						for (int i=0; i< jdbc.employees.size(); i++) {
+							if (jdbc.employees.get(i).getSocialSecurityNumber()==social) {
+								alreadyUser = true;
+							}						
+						}
+					}
+					if (alreadyUser == true) {
+						JOptionPane.showMessageDialog(frame, "Social Security Number already in data base please update current user.");
+						return;
+					}
 					employee.setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
+					
 					employee.setSalary(Integer.parseInt(salaryField.getText()));
 				} catch (NumberFormatException e1) {
 					JOptionPane.showMessageDialog(frame, "Please make sure the social security number and salary are less than 2,147,483,647");
@@ -332,7 +346,14 @@ public class JDBCGUI {
 				}
 				employee.setFirstName(firstNameField.getText());
 				employee.setSurname(surnameField.getText());
-				employee.setGender(genderField.getText().charAt(0));
+				if (genderField.getText().matches("((M)|(F)|(O))")) {
+					employee.setGender(genderField.getText().charAt(0)); 	
+				} else {
+					JOptionPane.showMessageDialog(frame, "Please enter gender as M, F or O");
+					jdbc.run();	
+					return;
+				}
+				
 				jdbc.employees.add(employee);
 				jdbc.create(jdbc.employees.get(jdbc.employees.size()-1));
 				

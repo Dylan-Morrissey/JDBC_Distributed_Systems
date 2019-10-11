@@ -9,7 +9,7 @@ import java.util.Properties;
 public class JDBC {
 
 	private final String userName = "root";
-	private final String password = "root";
+	private final String password = "";
 	private final String serverName = "localhost";
 	private final int portNumber = 3306;
 	private final String dbName = "test";
