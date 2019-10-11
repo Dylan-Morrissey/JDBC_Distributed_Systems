@@ -44,15 +44,28 @@ public class JDBCGUI {
 		
 		JButton btnUpdate_1 = new JButton("Update");
 		btnUpdate_1.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
+
+				try {
+					jdbc.employees.get(userno).setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
+					jdbc.employees.get(userno).setSalary(Integer.parseInt(salaryField.getText()));
+				} catch (NumberFormatException e1) {
+					System.out.println("Invalid Number entered");
+					jdbc.run();
+					return;
+				}
 				
-				jdbc.employees.get(userno).setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
-				jdbc.employees.get(userno).setDateOfBirth(dateOfBirthField.getText());
+				if (dateOfBirthField.getText().matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")){
+					jdbc.employees.get(userno).setDateOfBirth(dateOfBirthField.getText());
+				} else {
+					System.out.println("Please enter the correct date");
+					return;
+				}
 				jdbc.employees.get(userno).setFirstName(firstNameField.getText());
 				jdbc.employees.get(userno).setSurname(surnameField.getText());
-				jdbc.employees.get(userno).setSalary(Integer.parseInt(salaryField.getText()));
 				jdbc.employees.get(userno).setGender(genderField.getText().charAt(0));
 				jdbc.update(jdbc.employees.get(userno));
+				
 				
 				socialSecurityNumberField.setText(String.valueOf(jdbc.employees.get(0).getSocialSecurityNumber()));
 				dateOfBirthField.setText(jdbc.employees.get(0).getDateOfBirth());
@@ -61,6 +74,7 @@ public class JDBCGUI {
 				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
 				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
 				userCount.setText("User "+ 1 +" out of " + jdbc.count);
+				
 				
 			}
 		});
@@ -298,11 +312,24 @@ public class JDBCGUI {
 			public void actionPerformed(ActionEvent e) {
 				userno = (jdbc.count);
 				Employee employee = new Employee();
-				employee.setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
-				employee.setDateOfBirth(dateOfBirthField.getText());
+				
+				try {
+					employee.setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
+					employee.setSalary(Integer.parseInt(salaryField.getText()));
+				} catch (NumberFormatException e1) {
+					System.out.println("Invalid Number entered");
+					jdbc.run();
+					return;
+				}
+				
+				if (dateOfBirthField.getText().matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")){
+					employee.setDateOfBirth(dateOfBirthField.getText());
+				} else {
+					System.out.println("Please enter the correct date");
+					return;
+				}
 				employee.setFirstName(firstNameField.getText());
 				employee.setSurname(surnameField.getText());
-				employee.setSalary(Integer.parseInt(salaryField.getText()));
 				employee.setGender(genderField.getText().charAt(0));
 				jdbc.employees.add(employee);
 				jdbc.create(jdbc.employees.get(jdbc.employees.size()-1));
@@ -314,7 +341,8 @@ public class JDBCGUI {
 				salaryField.setText(String.valueOf(jdbc.employees.get(0).getSalary()));
 				genderField.setText(String.valueOf(jdbc.employees.get(0).getGender()));
 				userCount.setText("User "+ 1 +" out of " + jdbc.count);
-			}
+				}
+			
 		});
 		
 		JButton btnClear = new JButton("Clear");

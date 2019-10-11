@@ -164,8 +164,7 @@ public class JDBC {
 		try {
 			conn = this.getConnection();
 		    String updateEmployee = "UPDATE `employee` SET "
-		    		+ "`social_security_number`="+employee.getSocialSecurityNumber()
-		    		+",`date_of_birth`='"+employee.getDateOfBirth()
+		    		+"`date_of_birth`='"+employee.getDateOfBirth()
 		    		+"',`first_name`='"+employee.getFirstName()
 		    		+"',`surname`='"+employee.getSurname()
 		    		+"',`salary`="+employee.getSalary()
