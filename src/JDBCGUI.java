@@ -50,15 +50,16 @@ public class JDBCGUI {
 					jdbc.employees.get(userno).setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
 					jdbc.employees.get(userno).setSalary(Integer.parseInt(salaryField.getText()));
 				} catch (NumberFormatException e1) {
-					System.out.println("Invalid Number entered");
 					jdbc.run();
+					JOptionPane.showMessageDialog(frame, "Please make sure the social security number and salary are less than 2,147,483,647");
 					return;
 				}
 				
 				if (dateOfBirthField.getText().matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")){
 					jdbc.employees.get(userno).setDateOfBirth(dateOfBirthField.getText());
+					
 				} else {
-					System.out.println("Please enter the correct date");
+					JOptionPane.showMessageDialog(frame, "Please enter in the Format  yyyy-mm-dd");
 					return;
 				}
 				jdbc.employees.get(userno).setFirstName(firstNameField.getText());
@@ -317,7 +318,7 @@ public class JDBCGUI {
 					employee.setSocialSecurityNumber(Integer.parseInt(socialSecurityNumberField.getText()));
 					employee.setSalary(Integer.parseInt(salaryField.getText()));
 				} catch (NumberFormatException e1) {
-					System.out.println("Invalid Number entered");
+					JOptionPane.showMessageDialog(frame, "Please make sure the social security number and salary are less than 2,147,483,647");
 					jdbc.run();
 					return;
 				}
@@ -325,7 +326,8 @@ public class JDBCGUI {
 				if (dateOfBirthField.getText().matches("([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))")){
 					employee.setDateOfBirth(dateOfBirthField.getText());
 				} else {
-					System.out.println("Please enter the correct date");
+					JOptionPane.showMessageDialog(frame, "Please enter in the Format  yyyy-mm-dd");
+					jdbc.run();
 					return;
 				}
 				employee.setFirstName(firstNameField.getText());
